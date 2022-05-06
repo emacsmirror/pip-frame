@@ -1,0 +1,101 @@
+#+TITLE: pip-frame.el
+
+pip-frame.el allows displaying a floating Emacs frame with Emacs
+buffers in [[https://github.com/ch11ng/exwm][EXWM]] (and possibly other) environments.
+
+* Why?
+
+[[https://github.com/ch11ng/exwm][EXWM]], an Emacs window manager, supports floating windows, placed above
+the tiled windows.  But this doesn’t apply to Emacs buffers, there is
+no way known to me to display an Emacs buffer in a floating window.
+
+Having floating Emacs buffers looking like Picture-In-Picture is still
+useful.  Imagine you start a long compilation and do other work in the
+meantime.  You must poll the compilation status regularly.  Maybe the
+compilation fails early and you don’t notice it until the next polling
+interval.  Or you run an upgrade and forget about it, only to discover
+a couple of hours later that the upgrade has hung on an interactive
+question.  With a PIP frame displaying the compilation and upgrade
+buffers, you always know what’s happening.
+
+People often use secondary monitors for such overviews.  But this is
+often overkill.  It’s often hard to use all the space on contemporary
+wide or even very wide monitors.  I typically run Emacs with two
+windows side by side, focusing mostly on the left one.  The area close
+to the right bottom screen corner is the least one used and it’s a
+good place to place a PIP frame there.  And it’s often better than
+connecting a secondary monitor.
+
+In theory, it’s possible to create such a window in a standard Emacs
+frame.  But having a corner window is impractical, considering
+applications changing window layouts (e.g. [[http://www.gnus.org][Gnus]]).  And if workspaces
+are used, e.g. [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Tab-Bars.html][Emacs tabs]], the window is still hidden when working in
+a different workspace.  Similar problems are experienced when using
+tiling window managers other than EXWM.
+
+** Screenshot
+
+This is an example of an Emacs buffer displayed in a PIP frame using
+this utility:
+
+#+ATTR_HTML: :alt An Emacs frame with a PIP frame
+[[./screenshot.jpg]]
+
+* How?
+
+** Commands
+
+The PIP frame is created using =M-x pip-frame-add-buffer= command.  You
+can use the command repeatedly to add more buffers to the PIP frame.
+
+A buffer can be removed from the PIP frame using
+=M-x pip-frame-remove-buffer= command.  If the last buffer is removed
+from the PIP frame, the frame is deleted.  The frame can also be
+deleted any time using =M-x pip-frame-delete-frame=.
+
+If the frame obscures anything important, you can move it elsewhere
+with =M-x pip-frame-move=.
+
+There are no key bindings.  Feel free to add them to your
+configuration if needed.  But these commands are not very frequent and
+tools such as [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Icomplete.html][Icomplete mode]] or [[https://github.com/nonsequitur/smex][smex]] are likely to serve better than
+tons of key shortcuts.
+
+** Customization
+
+Use =M-x customize-group RET pip-frame RET= to customize pip-frame.el.
+
+Some customization examples:
+
+- To place the PIP frame to right top rather than to right bottom:
+
+  #+begin_src elisp
+    (setq pip-frame-parameters '((left . 0.9) (top . 0.1)))
+  #+end_src
+
+- To better distinguish the PIP frame from the rest of the screen (the
+  frame is intentionally kept out of EXWM hands and no window manager
+  borders are displayed), you can show it in inverse colors:
+
+  #+begin_src elisp
+    (setq pip-frame-face-attributes '((:inverse-video . t)))
+  #+end_src
+
+  Or with a different background:
+
+  #+begin_src elisp
+    (setq pip-frame-face-attributes '((:background . "light gray")))
+  #+end_src
+
+- To add internal borders to the PIP frame and make it resizable with
+  a mouse:
+
+  #+begin_src elisp
+    (setq pip-frame-parameters (append pip-frame-parameters
+                                       '((drag-internal-border . t)
+                                         (internal-border-width . 20))))
+  #+end_src
+
+-----
+
+/To Petr./
