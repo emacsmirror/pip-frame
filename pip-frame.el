@@ -112,7 +112,7 @@ custom option but it can be overriden here."
 If there is no PIP frame then create one.
 A buffer can be added and displayed multiple times in the frame."
   (interactive)
-  (let ((frame (or (pip-frame--get-frame t))))
+  (let ((frame (pip-frame--get-frame t)))
     (if frame
         (pip-frame--add-additional-buffer)
       (pip-frame--make-frame))))
