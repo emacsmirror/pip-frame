@@ -70,7 +70,7 @@ custom option but it can be overriden here."
         (unless no-error
           (error "No PIP frame")))))
 
-(defun pip-frame--make-frame ()
+(defun pip-frame--make-frame (buffer)
   (let ((frame (make-frame `((name . ,pip-frame--name)
                              (unsplittable . t)
                              ,@pip-frame-parameters
@@ -81,6 +81,7 @@ custom option but it can be overriden here."
     (set-face-attribute 'default frame :height face-height)
     (mapc #'(lambda (p) (set-face-attribute 'default frame (car p) (cdr p)))
           pip-frame-face-attributes)
+    (set-window-buffer (car (window-list frame)) buffer)
     frame))
 
 (defun pip-frame-delete-frame ()
@@ -91,7 +92,7 @@ custom option but it can be overriden here."
 (defun pip-frame--buffers ()
   (mapcar #'window-buffer (window-list (pip-frame--get-frame))))
 
-(defun pip-frame--add-additional-buffer ()
+(defun pip-frame--add-additional-buffer (buffer)
   (let* ((windows (window-list (pip-frame--get-frame)))
          (sizes (mapcar #'(lambda (w)
                             (let ((width (window-body-width w t))
@@ -104,18 +105,21 @@ custom option but it can be overriden here."
                    'right
                  'below))
          (new-window (split-window largest nil side)))
-    (set-window-buffer new-window (current-buffer))))
+    (set-window-buffer new-window buffer)))
 
 ;;;###autoload
-(defun pip-frame-add-buffer ()
-  "Add the current buffer to the PIP frame.
+(defun pip-frame-add-buffer (&optional buffer-or-name)
+  "Add a buffer to the PIP frame.
 If there is no PIP frame then create one.
+If BUFFER-OR-NAME is specified, add the given buffer to the frame,
+otherwise add the current buffer.
 A buffer can be added and displayed multiple times in the frame."
   (interactive)
-  (let ((frame (pip-frame--get-frame t)))
+  (let ((frame (pip-frame--get-frame t))
+        (buffer (get-buffer (or buffer-or-name (current-buffer)))))
     (if frame
-        (pip-frame--add-additional-buffer)
-      (pip-frame--make-frame))))
+        (pip-frame--add-additional-buffer buffer)
+      (pip-frame--make-frame buffer))))
 
 (defun pip-frame-remove-buffer (buffer-name)
   "Remove buffer named BUFFER-NAME from the PIP frame.
