@@ -61,6 +61,11 @@ custom option but it can be overriden here."
   :type '(alist :key-type symbol :value-type sexp)
   :group 'pip-frame)
 
+(defcustom pip-frame-temporary-buffer-seconds 10
+  "Number of seconds to keep a buffer displayed temporarily by default."
+  :type 'number
+  :group 'pip-frame)
+
 (defvar pip-frame--name "PIP-frame")
 
 (defun pip-frame--get-frame (&optional no-error)
@@ -92,45 +97,76 @@ custom option but it can be overriden here."
 (defun pip-frame--buffers ()
   (mapcar #'window-buffer (window-list (pip-frame--get-frame))))
 
-(defun pip-frame--add-additional-buffer (buffer)
-  (let* ((windows (window-list (pip-frame--get-frame)))
-         (sizes (mapcar #'(lambda (w)
-                            (let ((width (window-body-width w t))
-                                  (height (window-body-height w t)))
-                              (cons (+ (* width width) (* height height))
-                                    w)))
-                        windows))
-         (largest (cdr (cl-first (cl-sort sizes #'> :key #'car))))
-         (side (if (> (window-body-width largest t) (* 2 (window-body-height largest t)))
-                   'right
-                 'below))
-         (new-window (split-window largest nil side)))
-    (set-window-buffer new-window buffer)))
+(defun pip-frame--add-additional-buffer (buffer temporary)
+  (let ((windows (window-list (pip-frame--get-frame))))
+    (unless (and temporary
+                 (cl-find buffer windows :key #'window-buffer :test #'eq))
+      (let* ((sizes (mapcar #'(lambda (w)
+                                (let ((width (window-body-width w t))
+                                      (height (window-body-height w t)))
+                                  (cons (+ (* width width) (* height height))
+                                        w)))
+                            windows))
+             (largest (cdr (cl-first (cl-sort sizes #'> :key #'car))))
+             (side (if (> (window-body-width largest t)
+                          (* 2 (window-body-height largest t)))
+                       'right
+                     'below))
+             (new-window (split-window largest nil side)))
+        (set-window-buffer new-window buffer)))))
 
+(defvar pip-frame--buffer-timers '())
+
+(defun pip-frame--make-buffer-temporary (buffer seconds)
+  (when (eq seconds t)
+    (setq seconds pip-frame-temporary-buffer-seconds))
+  (let ((timer (run-with-timer seconds nil #'pip-frame-remove-buffer buffer)))
+    (setq pip-frame--buffer-timers (cons (cons buffer timer)
+                                         pip-frame--buffer-timers))))
+
+(defun pip-frame--delete-buffer-timer (buffer)
+  (let ((timer (alist-get buffer pip-frame--buffer-timers)))
+    (when timer
+      (cancel-timer timer)
+      (setq pip-frame--buffer-timers
+            (assq-delete-all buffer pip-frame--buffer-timers)))))
+  
 ;;;###autoload
-(defun pip-frame-add-buffer (&optional buffer-or-name)
+(defun pip-frame-add-buffer (&optional buffer-or-name temporary)
   "Add a buffer to the PIP frame.
 If there is no PIP frame then create one.
 If BUFFER-OR-NAME is specified, add the given buffer to the frame,
 otherwise add the current buffer.
-A buffer can be added and displayed multiple times in the frame."
+If TEMPORARY is given, display the buffer in the PIP frame for that
+many seconds and then remove it from the frame.  If t, display it for
+`pip-frame-temporary-buffer-seconds'.
+A buffer can be added and displayed multiple times in the frame.  If
+TEMPORARY is non-nil, the buffer is not displayed again if it is
+already present."
   (interactive)
   (let ((frame (pip-frame--get-frame t))
         (buffer (get-buffer (or buffer-or-name (current-buffer)))))
     (if frame
-        (pip-frame--add-additional-buffer buffer)
-      (pip-frame--make-frame buffer))))
+        (progn
+          (when temporary
+            (pip-frame--delete-buffer-timer buffer))
+          (pip-frame--add-additional-buffer buffer temporary))
+      (pip-frame--make-frame buffer))
+    (when temporary
+      (pip-frame--make-buffer-temporary buffer temporary))))
 
-(defun pip-frame-remove-buffer (buffer-name)
-  "Remove buffer named BUFFER-NAME from the PIP frame.
-If it is the last buffer in the PIP frame, delete the frame."
+(defun pip-frame-remove-buffer (buffer-or-name)
+  "Remove buffer named BUFFER-OR-NAME from the PIP frame.
+If it is the last buffer in the PIP frame, delete the frame.
+If the buffer is not present in the PIP frame, do nothing."
   (interactive (list (completing-read "Remove PIP buffer: "
                                       (mapcar #'buffer-name (pip-frame--buffers))
                                       nil t)))
   (let* ((windows (window-list (pip-frame--get-frame)))
-         (windows-to-delete (cl-remove buffer-name windows
-                                       :key #'(lambda (w) (buffer-name (window-buffer w)))
-                                       :test-not #'string=)))
+         (buffer (get-buffer buffer-or-name))
+         (windows-to-delete (cl-remove buffer windows
+                                       :key #'window-buffer
+                                       :test-not #'eq)))
     (if (= (length windows-to-delete) (length windows))
         (pip-frame-delete-frame)
       (mapc #'delete-window windows-to-delete))))
