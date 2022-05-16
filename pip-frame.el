@@ -84,7 +84,7 @@ custom option but it can be overriden here."
     frame))
 
 (defun pip-frame-delete-frame ()
-  ""
+  "Delete the PIP frame."
   (interactive)
   (delete-frame (pip-frame--get-frame)))
 
@@ -108,7 +108,9 @@ custom option but it can be overriden here."
 
 ;;;###autoload
 (defun pip-frame-add-buffer ()
-  ""
+  "Add the current buffer to the PIP frame.
+If there is no PIP frame then create one.
+A buffer can be added and displayed multiple times in the frame."
   (interactive)
   (let ((frame (or (pip-frame--get-frame t))))
     (if frame
@@ -116,7 +118,8 @@ custom option but it can be overriden here."
       (pip-frame--make-frame))))
 
 (defun pip-frame-remove-buffer (buffer-name)
-  ""
+  "Remove buffer named BUFFER-NAME from the PIP frame.
+If it is the last buffer in the PIP frame, delete the frame."
   (interactive (list (completing-read "Remove PIP buffer: "
                                       (mapcar #'buffer-name (pip-frame--buffers))
                                       nil t)))
@@ -164,7 +167,9 @@ custom option but it can be overriden here."
     map))
   
 (defun pip-frame-move ()
-  ""
+  "Move PIP frame interactively.
+Use arrow keys to move the frame around.
+Any other key stops this command and executes its own command."
   (interactive)
   (message "Use arrow keys to move the frame, any other key to quit")
   (set-transient-map pip-frame-move-map t))
