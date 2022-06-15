@@ -49,7 +49,8 @@ Usually, the value should be larger than 0 and much smaller than 1."
 
 (defcustom pip-frame-parameters
   '((left . 0.9)
-    (top .  0.9))
+    (top .  0.9)
+    (minibuffer . nil))
   "Alist of frame parameters to use for the PIP frame.
 The frame size is determined automatically using `pip-frame-scale'
 custom option but it can be overriden here."
