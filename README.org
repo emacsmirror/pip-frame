@@ -96,6 +96,10 @@ Some customization examples:
                                          (internal-border-width . 20))))
   #+end_src
 
------
+* Contact
 
-/To Petr./
+pip-frame.el is available at [[https://git.zamazal.org/pdm/pip-frame][git.zamazal.org]].  You can file issues
+there.
+
+If you don’t want to discuss things publicly or to bother registering
+at yet another web site, you can reach me at [[mailto:pdm@zamazal.org][pdm@zamazal.org]].
