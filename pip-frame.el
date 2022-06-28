@@ -87,8 +87,8 @@ custom option but it can be overriden here."
         (frame-inhibit-implied-resize t)
         (face-height (round (/ (face-attribute 'default :height) pip-frame-font-scale))))
     (set-face-attribute 'default frame :height face-height)
-    (mapc (lambda (p) (set-face-attribute 'default frame (car p) (cdr p)))
-          pip-frame-face-attributes)
+    (dolist (p pip-frame-face-attributes)
+      (set-face-attribute 'default frame (car p) (cdr p)))
     (set-window-buffer (car (window-list frame)) buffer)
     frame))
 
@@ -172,7 +172,7 @@ If the buffer is not present in the PIP frame, do nothing."
                                        :test-not #'eq)))
     (if (= (length windows-to-delete) (length windows))
         (pip-frame-delete-frame)
-      (mapc #'delete-window windows-to-delete))))
+      (seq-do #'delete-window windows-to-delete))))
 
 (defun pip-frame--move (x y)
   (let ((frame (pip-frame--get-frame)))
