@@ -35,7 +35,8 @@
 (require 'cl-lib)
 
 (defgroup pip-frame ()
-  "Display PIP frame.")
+  "Display PIP frame."
+  :group 'frames)
 
 (defcustom pip-frame-scale 4
   "How many times to shrink the PIP frame relative to the display size."
