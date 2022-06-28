@@ -1,6 +1,11 @@
-;;; pip-frame.el --- PIP frame support  -*- lexical-binding: t -*-
+;;; pip-frame.el --- Display and manage a PIP frame  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022 Milan Zamazal <pdm@zamazal.org>
+
+;; Author: Milan Zamazal <pdm@zamazal.org>
+;; Package-Version: 1
+;; Keywords: frames
+;; URL: https://git.zamazal.org/pdm/pip-frame
 
 ;; COPYRIGHT NOTICE
 ;;
