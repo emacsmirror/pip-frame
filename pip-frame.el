@@ -73,7 +73,7 @@ custom option but it can be overriden here."
 
 (defun pip-frame--get-frame (&optional no-error)
   (let ((frame (cl-find pip-frame--name (frame-list)
-                        :key #'(lambda (f) (frame-parameter f 'name)))))
+                        :key (lambda (f) (frame-parameter f 'name)))))
     (or frame
         (unless no-error
           (error "No PIP frame")))))
@@ -87,7 +87,7 @@ custom option but it can be overriden here."
         (frame-inhibit-implied-resize t)
         (face-height (round (/ (face-attribute 'default :height) pip-frame-font-scale))))
     (set-face-attribute 'default frame :height face-height)
-    (mapc #'(lambda (p) (set-face-attribute 'default frame (car p) (cdr p)))
+    (mapc (lambda (p) (set-face-attribute 'default frame (car p) (cdr p)))
           pip-frame-face-attributes)
     (set-window-buffer (car (window-list frame)) buffer)
     frame))
@@ -104,11 +104,11 @@ custom option but it can be overriden here."
   (let ((windows (window-list (pip-frame--get-frame))))
     (unless (and temporary
                  (cl-find buffer windows :key #'window-buffer :test #'eq))
-      (let* ((sizes (mapcar #'(lambda (w)
-                                (let ((width (window-body-width w t))
-                                      (height (window-body-height w t)))
-                                  (cons (+ (* width width) (* height height))
-                                        w)))
+      (let* ((sizes (mapcar (lambda (w)
+                              (let ((width (window-body-width w t))
+                                    (height (window-body-height w t)))
+                                (cons (+ (* width width) (* height height))
+                                      w)))
                             windows))
              (largest (cdr (cl-first (cl-sort sizes #'> :key #'car))))
              (side (if (> (window-body-width largest t)
