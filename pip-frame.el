@@ -17,6 +17,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+;;; Commentary:
+;;
 ;; Display a floating Emacs frame with selected buffers.
 ;; Similar to PIP on screens.  Probably most useful in EXWM.
 ;;
