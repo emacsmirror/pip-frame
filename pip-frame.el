@@ -4,6 +4,7 @@
 
 ;; Author: Milan Zamazal <pdm@zamazal.org>
 ;; Package-Version: 1
+;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: frames
 ;; URL: https://git.zamazal.org/pdm/pip-frame
 
