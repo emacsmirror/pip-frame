@@ -226,3 +226,5 @@ Any other key stops this command and executes its own command."
   (set-transient-map pip-frame-move-map t))
 
 (provide 'pip-frame)
+
+;;; pip-frame.el ends here
