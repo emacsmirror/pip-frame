@@ -35,6 +35,8 @@
 
 (require 'cl-lib)
 
+;;; Code:
+
 (defgroup pip-frame ()
   "Display PIP frame."
   :group 'frames)
@@ -194,18 +196,22 @@ If the buffer is not present in the PIP frame, do nothing."
       (round (* pip-frame-move-step (nth (if vertical 3 2) workarea))))))
 
 (defun pip-frame-move-left ()
+  "Move the PIP frame left."
   (interactive)
   (pip-frame--move (- (pip-frame--move-step nil)) 0))
 
 (defun pip-frame-move-right ()
+  "Move the PIP frame right."
   (interactive)
   (pip-frame--move (pip-frame--move-step nil) 0))
 
 (defun pip-frame-move-up ()
+  "Move the PIP frame up."
   (interactive)
   (pip-frame--move 0 (- (pip-frame--move-step t))))
 
 (defun pip-frame-move-down ()
+  "Move the PIP frame down."
   (interactive)
   (pip-frame--move 0 (pip-frame--move-step t)))
 
