@@ -33,9 +33,9 @@
 ;; `M-x pip-frame-remove-buffer' or close the whole frame with
 ;; `M-x pip-frame-delete-frame'.
 
-(require 'cl-lib)
-
 ;;; Code:
+
+(require 'cl-lib)
 
 (defgroup pip-frame ()
   "Display PIP frame."
