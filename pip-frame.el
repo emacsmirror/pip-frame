@@ -233,4 +233,8 @@ Any other key stops this command and executes its own command."
 
 (provide 'pip-frame)
 
+;; Local Variables:
+;; checkdoc-force-docstrings-flag: nil
+;; End:
+
 ;;; pip-frame.el ends here
