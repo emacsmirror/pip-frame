@@ -43,6 +43,26 @@ this utility:
 
 * How?
 
+** Installation
+
+You can install pip-frame.el from [[https://melpa.org/#/pip-frame][MELPA]].  If you use [[https://github.com/radian-software/straight.el][straight.el]] and
+prefer using source repos directly, you can install pip-frame.el as
+follows:
+
+   #+begin_src elisp
+(straight-use-package
+ '(pip-frame :type git
+             :repo "https://git.zamazal.org/pdm/pip-frame"
+             :local-repo "pip-frame"))
+   #+end_src
+
+For manual installation, simply put [[./pip-frame.el][pip-frame.el]] file to your
+=site-lisp= directory and add the following to your Emacs configuration:
+
+   #+begin_src elisp
+(require ’pip-frame)
+   #+end_src
+
 ** Commands
 
 The PIP frame is created using =M-x pip-frame-add-buffer= command.  You
