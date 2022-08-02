@@ -175,14 +175,15 @@ If the buffer is not present in the PIP frame, do nothing."
   (interactive (list (completing-read "Remove PIP buffer: "
                                       (mapcar #'buffer-name (pip-frame--buffers))
                                       nil t)))
-  (let* ((windows (window-list (pip-frame--get-frame)))
-         (buffer (get-buffer buffer-or-name))
-         (windows-to-delete (cl-remove buffer windows
-                                       :key #'window-buffer
-                                       :test-not #'eq)))
-    (if (= (length windows-to-delete) (length windows))
-        (pip-frame-delete-frame)
-      (seq-do #'delete-window windows-to-delete))))
+  (if-let ((frame (pip-frame--get-frame t))
+           (windows (window-list frame))
+           (buffer (get-buffer buffer-or-name))
+           (windows-to-delete (cl-remove buffer windows
+                                         :key #'window-buffer
+                                         :test-not #'eq)))
+      (if (= (length windows-to-delete) (length windows))
+          (pip-frame-delete-frame)
+        (seq-do #'delete-window windows-to-delete))))
 
 (defun pip-frame--move (x y)
   (let ((frame (pip-frame--get-frame)))
